@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COCHACOIN · Dashboard Municipal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">🌿</div>
+        <div>
+          <span class="logo-text">COCHA<em>COIN</em></span>
+          <span class="logo-sub">Panel Municipal</span>
+        </div>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar menú">✕</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <span class="nav-section-label">Principal</span>
+      <a href="#overview"    class="nav-item active" data-section="overview">
+        <span class="nav-icon">📊</span> Resumen general
+      </a>
+      <a href="#registros"   class="nav-item" data-section="registros">
+        <span class="nav-icon">📋</span> Registros
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#campanas"    class="nav-item" data-section="campanas">
+        <span class="nav-icon">🎯</span> Campañas y retos
+      </a>
+      <a href="#prediccion"  class="nav-item" data-section="prediccion">
+        <span class="nav-icon">🔮</span> Predicción IA
+      </a>
+      <a href="#rutas"       class="nav-item" data-section="rutas">
+        <span class="nav-icon">🛣️</span> Rutas óptimas
+      </a>
+
+      <span class="nav-section-label" style="margin-top:1.5rem;">Configuración</span>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">👥</span> Usuarios y roles
+      </a>
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🌐</span> Ir al sitio público
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar">AM</div>
+        <div>
+          <p class="user-name">Admin Municipal</p>
+          <p class="user-role">Admin central</p>
+        </div>
+        <span class="user-status"></span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main-wrapper">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">☰</button>
+        <div>
+          <h1 class="topbar-title">Resumen general</h1>
+          <p class="topbar-sub">Cochabamba · Actualizado hace 2 min</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-filter">
+          <label for="periodoFilter">Periodo</label>
+          <select id="periodoFilter">
+            <option value="7">Últimos 7 días</option>
+            <option value="30" selected>Últimos 30 días</option>
+            <option value="90">Últimos 3 meses</option>
+            <option value="365">Este año</option>
+          </select>
+        </div>
+        <button class="btn-export" id="btnExportCSV">⬇ Exportar CSV</button>
+        <div class="topbar-alert" title="12 registros pendientes de validación">
+          🔔 <span class="alert-dot"></span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== CONTENIDO PRINCIPAL ===== -->
+    <main class="main-content">
+
+      <!-- ── SECCIÓN: OVERVIEW ── -->
+      <section id="overview" class="dash-section active">
+
+        <!-- KPI CARDS -->
+        <div class="kpi-grid">
+          <div class="kpi-card" data-animate>
+            <div class="kpi-icon" style="background:rgba(102,187,106,0.12);">♻️</div>
+            <div class="kpi-body">
+              <span class="kpi-label">Total kg recolectados</span>
+              <span class="kpi-value" data-count="12847">0</span>
+              <span class="kpi-delta positive">↑ 8.3% vs mes anterior</span>
+            </div>
+          </div>
+          <div class="kpi-card" data-animate data-delay="80">
+            <div class="kpi-icon" style="background:rgba(2,136,209,0.12);">🌫️</div>
+            <div class="kpi-body">
+              <span class="kpi-label">CO₂ evitado (kg)</span>
+              <span class="kpi-value" data-count="8214">0</span>
+              <span class="kpi-delta positive">↑ 5.1% vs mes anterior</span>
+            </div>
+          </div>
+          <div class="kpi-card" data-animate data-delay="160">
+            <div class="kpi-icon" style="background:rgba(141,110,99,0.12);">👥</div>
+            <div class="kpi-body">
+              <span class="kpi-label">Usuarios activos</span>
+              <span class="kpi-value" data-count="3284">0</span>
+              <span class="kpi-delta positive">↑ 12% vs mes anterior</span>
+            </div>
+          </div>
+          <div class="kpi-card" data-animate data-delay="240">
+            <div class="kpi-icon" style="background:rgba(46,125,50,0.12);">💰</div>
+            <div class="kpi-body">
+              <span class="kpi-label">Ahorro estimado (Bs)</span>
+              <span class="kpi-value" data-count="48320" data-prefix="Bs ">0</span>
+              <span class="kpi-delta positive">↑ 6.7% vs mes anterior</span>
+            </div>
+          </div>
+          <div class="kpi-card" data-animate data-delay="320">
+            <div class="kpi-icon" style="background:rgba(102,187,106,0.12);">📦</div>
+            <div class="kpi-body">
+              <span class="kpi-label">% Reciclaje efectivo</span>
+              <span class="kpi-value" data-count="68" data-suffix="%">0</span>
+              <span class="kpi-delta negative">↓ 1.2% vs mes anterior</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRÁFICOS: BARRAS + LÍNEA -->
+        <div class="charts-row">
+
+          <!-- Barras por tipo de residuo -->
+          <div class="chart-card" data-animate>
+            <div class="chart-header">
+              <div>
+                <h2 class="chart-title">Residuos por tipo</h2>
+                <p class="chart-sub">Kilogramos registrados este periodo</p>
+              </div>
+              <div class="chart-legend">
+                <span class="legend-dot" style="background:#66BB6A;"></span>Validado
+                <span class="legend-dot" style="background:#0288D1;margin-left:0.8rem;"></span>Pendiente
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chartBarras" aria-label="Gráfico de barras por tipo de residuo"></canvas>
+            </div>
+          </div>
+
+          <!-- Línea tendencia mensual -->
+          <div class="chart-card" data-animate data-delay="100">
+            <div class="chart-header">
+              <div>
+                <h2 class="chart-title">Tendencia mensual</h2>
+                <p class="chart-sub">kg recolectados por mes (2025)</p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chartLinea" aria-label="Gráfico de tendencia mensual"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAPA HEATMAP -->
+        <div class="map-card" data-animate>
+          <div class="chart-header">
+            <div>
+              <h2 class="chart-title">Mapa de calor · Acumulación de residuos</h2>
+              <p class="chart-sub">Zonas con mayor concentración — Cochabamba</p>
+            </div>
+            <div class="map-controls">
+              <button class="map-btn active" id="btnHeatmap">🔥 Heatmap</button>
+              <button class="map-btn" id="btnPuntos">📍 Puntos limpios</button>
+            </div>
+          </div>
+          <div id="mapa" style="height:420px; border-radius:14px; overflow:hidden;"></div>
+          <div class="map-legend">
+            <span class="map-legend-item"><span class="dot" style="background:#ff4d4d;"></span>Alta acumulación</span>
+            <span class="map-legend-item"><span class="dot" style="background:#ffa500;"></span>Media</span>
+            <span class="map-legend-item"><span class="dot" style="background:#66BB6A;"></span>Punto limpio</span>
+            <span class="map-legend-item"><span class="dot" style="background:#0288D1;"></span>Reporte ciudadano</span>
+          </div>
+        </div>
+
+      </section><!-- /overview -->
+
+      <!-- ── SECCIÓN: REGISTROS (placeholder) ── -->
+      <section id="registros" class="dash-section">
+        <div class="coming-soon">
+          <span>📋</span>
+          <h2>Gestión de registros</h2>
+          <p>Valida, edita y aprueba registros ciudadanos.<br/>Esta sección se construye en la Parte 2.</p>
+        </div>
+      </section>
+
+      <!-- ── SECCIÓN: CAMPAÑAS (placeholder) ── -->
+      <section id="campanas" class="dash-section">
+        <div class="coming-soon">
+          <span>🎯</span>
+          <h2>Campañas y retos</h2>
+          <p>Crea y gestiona retos por distrito.<br/>Esta sección se construye en la Parte 2.</p>
+        </div>
+      </section>
+
+      <!-- ── SECCIÓN: PREDICCIÓN (placeholder) ── -->
+      <section id="prediccion" class="dash-section">
+        <div class="coming-soon">
+          <span>🔮</span>
+          <h2>Predicción IA</h2>
+          <p>Modelo de acumulación por zona basado en datos históricos.<br/>Esta sección se construye en la Parte 2.</p>
+        </div>
+      </section>
+
+      <!-- ── SECCIÓN: RUTAS (placeholder) ── -->
+      <section id="rutas" class="dash-section">
+        <div class="coming-soon">
+          <span>🛣️</span>
+          <h2>Rutas óptimas</h2>
+          <p>Sugerencia de rutas de recolección por zona.<br/>Esta sección se construye en la Parte 2.</p>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /main-wrapper -->
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
