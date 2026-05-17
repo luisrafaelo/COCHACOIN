@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECO-LLAJTA · Mapa en vivo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="mapa.css" />
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="mapa-topbar">
+    <a href="index.html" class="mapa-logo">
+      <div class="mapa-logo-icon">
+        <img src="assets/eco.png" alt="ECOLLAJTA" onerror="this.parentElement.innerHTML='🌿'"/>
+      </div>
+      <span class="mapa-logo-text">ECO<em>LLAJTA</em></span>
+    </a>
+
+    <div class="mapa-titulo">
+      <span class="mapa-live-dot"></span>
+      Mapa en vivo · Cochabamba
+    </div>
+
+    <div class="mapa-topbar-right">
+      <a href="index.html" class="mapa-nav-link">← Inicio</a>
+      <a href="login.html" class="mapa-nav-btn">Panel municipal</a>
+    </div>
+  </header>
+
+  <!-- LAYOUT PRINCIPAL -->
+  <div class="mapa-layout">
+
+    <!-- PANEL IZQUIERDO -->
+    <aside class="mapa-panel">
+
+      <!-- FILTROS -->
+      <div class="panel-section">
+        <h3 class="panel-section-title">Capas del mapa</h3>
+        <div class="capa-btns">
+          <button class="capa-btn active" data-capa="heatmap">
+            🔥 Acumulación
+          </button>
+          <button class="capa-btn" data-capa="puntos">
+            ♻️ Puntos limpios
+          </button>
+          <button class="capa-btn" data-capa="reportes">
+            🚨 Reportes
+          </button>
+          <button class="capa-btn" data-capa="rutas">
+            🛣️ Rutas activas
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTRO POR TIPO -->
+      <div class="panel-section">
+        <h3 class="panel-section-title">Filtrar por residuo</h3>
+        <div class="tipo-filtros">
+          <label class="tipo-check">
+            <input type="checkbox" checked data-tipo="organico"/> 🥦 Orgánico
+          </label>
+          <label class="tipo-check">
+            <input type="checkbox" checked data-tipo="plastico"/> ♻️ Plástico PET
+          </label>
+          <label class="tipo-check">
+            <input type="checkbox" checked data-tipo="papel"/> 📦 Papel/Cartón
+          </label>
+          <label class="tipo-check">
+            <input type="checkbox" checked data-tipo="vidrio"/> 🍾 Vidrio
+          </label>
+          <label class="tipo-check">
+            <input type="checkbox" checked data-tipo="metal"/> 🥫 Metal
+          </label>
+          <label class="tipo-check">
+            <input type="checkbox" checked data-tipo="electronico"/> 📱 Electrónico
+          </label>
+        </div>
+      </div>
+
+      <!-- ESTADÍSTICAS EN VIVO -->
+      <div class="panel-section">
+        <h3 class="panel-section-title">En vivo ahora</h3>
+        <div class="live-stats">
+          <div class="live-stat">
+            <span class="live-stat-val" id="lsActivos">5</span>
+            <span class="live-stat-lbl">Puntos activos</span>
+          </div>
+          <div class="live-stat">
+            <span class="live-stat-val" id="lsReportes">7</span>
+            <span class="live-stat-lbl">Reportes hoy</span>
+          </div>
+          <div class="live-stat">
+            <span class="live-stat-val" id="lsKg">284</span>
+            <span class="live-stat-lbl">kg registrados hoy</span>
+          </div>
+          <div class="live-stat">
+            <span class="live-stat-val" id="lsRutas">4</span>
+            <span class="live-stat-lbl">Rutas en curso</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALERTAS -->
+      <div class="panel-section">
+        <h3 class="panel-section-title">Alertas activas</h3>
+        <div class="alertas-lista" id="alertasLista">
+          <!-- generado por JS -->
+        </div>
+      </div>
+
+      <!-- LEYENDA -->
+      <div class="panel-section">
+        <h3 class="panel-section-title">Leyenda</h3>
+        <div class="leyenda">
+          <div class="leyenda-item">
+            <span class="leyenda-dot" style="background:#ff2200;"></span>
+            Alta acumulación
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-dot" style="background:#ffa500;"></span>
+            Acumulación media
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-dot" style="background:#00C853;"></span>
+            Punto limpio activo
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-dot" style="background:#E53935;"></span>
+            Reporte ciudadano
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-dot" style="background:#4FC3F7;"></span>
+            Ruta de recolección
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-dot" style="background:#ffa500;"></span>
+            Planta Cotapachi
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- MAPA -->
+    <div class="mapa-contenedor">
+      <div id="mapaVivo"></div>
+
+      <!-- BOTÓN REPORTE FLOTANTE -->
+      <button class="btn-reporte-flotante" id="btnReporte">
+        🚨 Reportar basura
+      </button>
+
+      <!-- BUSCADOR FLOTANTE -->
+      <div class="mapa-buscador">
+        <input
+          type="text"
+          id="buscadorInput"
+          placeholder="🔍 Buscar barrio o punto..."
+        />
+      </div>
+
+      <!-- INFO FLOTANTE (aparece al hacer clic en un punto) -->
+      <div class="mapa-info-float" id="mapaInfoFloat">
+        <button class="info-float-close" id="infoFloatClose">✕</button>
+        <div class="info-float-body" id="infoFloatBody"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL REPORTE -->
+  <div class="modal-overlay" id="modalReporte">
+    <div class="modal-reporte-card">
+      <button class="modal-reporte-close" id="modalReporteClose">✕</button>
+      <div class="modal-reporte-header">
+        <span>🚨</span>
+        <h2>Reportar basura acumulada</h2>
+      </div>
+      <div class="modal-reporte-body">
+        <div class="rep-group">
+          <label>Tipo de problema</label>
+          <select id="repTipo">
+            <option value="basurero_lleno">Basurero lleno</option>
+            <option value="acumulacion">Acumulación en vía pública</option>
+            <option value="quema">Quema de basura</option>
+            <option value="escombros">Escombros</option>
+          </select>
+        </div>
+        <div class="rep-group">
+          <label>Barrio / Zona</label>
+          <input type="text" id="repBarrio" placeholder="Ej: La Cancha, Cala Cala..."/>
+        </div>
+        <div class="rep-group">
+          <label>Descripción</label>
+          <textarea id="repDesc" rows="3" placeholder="Describí brevemente el problema..."></textarea>
+        </div>
+        <div class="rep-gps">
+          <span class="rep-gps-icon">📍</span>
+          <span id="repGpsTexto">Obteniendo ubicación GPS...</span>
+        </div>
+      </div>
+      <div class="modal-reporte-footer">
+        <button class="rep-btn-cancelar" id="repCancelar">Cancelar</button>
+        <button class="rep-btn-enviar" id="repEnviar">🚨 Enviar reporte</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="mapa.js"></script>
+</body>
+</html>
