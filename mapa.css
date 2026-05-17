@@ -50,7 +50,8 @@ button { cursor: pointer; font-family: var(--font-body); }
   padding: 0 1.2rem;
   flex-shrink: 0;
   z-index: 300;
-  gap: 1rem;
+  gap: 0.5rem;
+  overflow: hidden;
 }
 
 .mapa-logo {
@@ -101,8 +102,9 @@ button { cursor: pointer; font-family: var(--font-body); }
 .mapa-topbar-right {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   flex-shrink: 0;
+  min-width: 0;
 }
 .mapa-nav-link {
   font-size: 0.82rem;
@@ -597,7 +599,6 @@ button { cursor: pointer; font-family: var(--font-body); }
 
 /* ===== RESPONSIVE ===== */
 
-/* ===== RESPONSIVE ===== */
 .mapa-hamburguesa {
   display: none;
   background: none;
@@ -607,6 +608,8 @@ button { cursor: pointer; font-family: var(--font-body); }
   padding: 0.35rem 0.55rem;
   border-radius: var(--radius-sm);
   transition: border-color 0.2s, color 0.2s;
+  z-index: 400;
+  flex-shrink: 0;
 }
 .mapa-hamburguesa:hover { border-color: var(--celeste); color: var(--celeste); }
 
