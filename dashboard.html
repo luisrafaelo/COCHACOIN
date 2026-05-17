@@ -129,7 +129,7 @@
             </div>
           </div>
           <div class="kpi-card" data-animate data-delay="240">
-            <div class="kpi-icon" style="background:rgba(0,200,83,0.12);">🪙</div>
+            <div class="kpi-icon" style="background:rgba(0,200,83,0.12);">💰</div>
             <div class="kpi-body">
               <span class="kpi-label">COCHAPESOS circulantes</span>
               <span class="kpi-value" data-count="76610">0</span>
@@ -201,40 +201,509 @@
       </section><!-- /overview -->
 
       <!-- ── SECCIÓN: REGISTROS ── -->
-      <section id="registros" class="dash-section">
-        <div class="coming-soon">
-          <span>📋</span>
-          <h2>Gestión de registros</h2>
-          <p>Valida, edita y aprueba registros ciudadanos.<br/>Esta sección se construye en la Parte 2.</p>
-        </div>
-      </section>
+<section id="registros" class="dash-section">
 
-      <!-- ── SECCIÓN: CAMPAÑAS ── -->
-      <section id="campanas" class="dash-section">
-        <div class="coming-soon">
-          <span>🎯</span>
-          <h2>Campañas y retos</h2>
-          <p>Crea y gestiona retos por distrito.<br/>Esta sección se construye en la Parte 2.</p>
-        </div>
-      </section>
+  <!-- FILTROS Y ACCIONES -->
+  <div class="reg-toolbar">
+    <div class="reg-filters">
+      <select id="filtroEstado">
+        <option value="todos">Todos los estados</option>
+        <option value="pendiente" selected>Pendientes</option>
+        <option value="aprobado">Aprobados</option>
+        <option value="rechazado">Rechazados</option>
+      </select>
+      <select id="filtroTipo">
+        <option value="todos">Todos los tipos</option>
+        <option value="Orgánico">Orgánico</option>
+        <option value="Plástico PET">Plástico PET</option>
+        <option value="Papel/Cartón">Papel/Cartón</option>
+        <option value="Vidrio">Vidrio</option>
+        <option value="Metal/Aluminio">Metal/Aluminio</option>
+        <option value="Electrónico">Electrónico</option>
+      </select>
+      <input type="text" id="filtroBuscar" placeholder="🔍 Buscar ciudadano o barrio..."/>
+    </div>
+    <div class="reg-actions">
+      <button class="btn-aprobar-sel" id="btnAprobarSel" disabled>✅ Aprobar seleccionados</button>
+      <button class="btn-export" id="btnExportRegistros">⬇ Exportar CSV</button>
+    </div>
+  </div>
 
-      <!-- ── SECCIÓN: PREDICCIÓN ── -->
-      <section id="prediccion" class="dash-section">
-        <div class="coming-soon">
-          <span>🔮</span>
-          <h2>Predicción IA</h2>
-          <p>Modelo de acumulación por zona basado en datos históricos.<br/>Esta sección se construye en la Parte 2.</p>
-        </div>
-      </section>
+  <!-- TABLA -->
+  <div class="reg-table-wrap">
+    <table class="reg-table" id="tablaRegistros">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="checkAll"/></th>
+          <th>Ciudadano</th>
+          <th>Tipo residuo</th>
+          <th>Peso (kg)</th>
+          <th>Barrio</th>
+          <th>Fecha</th>
+          <th>IA Score</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="regTbody">
+        <!-- generado por JS -->
+      </tbody>
+    </table>
+  </div>
 
-      <!-- ── SECCIÓN: RUTAS ── -->
-      <section id="rutas" class="dash-section">
-        <div class="coming-soon">
-          <span>🛣️</span>
-          <h2>Rutas óptimas</h2>
-          <p>Sugerencia de rutas de recolección por zona.<br/>Esta sección se construye en la Parte 2.</p>
+  <!-- PAGINACIÓN -->
+  <div class="reg-pagination">
+    <span id="regCount" class="reg-count">Mostrando 0 registros</span>
+    <div class="pag-btns">
+      <button class="pag-btn" id="pagPrev" disabled>← Anterior</button>
+      <span id="pagInfo" class="pag-info">Página 1 de 1</span>
+      <button class="pag-btn" id="pagNext" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+</section>
+
+<!-- MODAL: ver detalle de registro -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card" id="modalCard">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitulo">Detalle del registro</h2>
+      <span class="modal-badge" id="modalBadge"></span>
+    </div>
+    <div class="modal-body">
+      <div class="modal-foto-wrap">
+        <img id="modalFoto" src="" alt="Foto del residuo" class="modal-foto"/>
+        <div class="modal-ia">
+          <span class="ia-label">🤖 IA Score</span>
+          <div class="ia-bar-wrap">
+            <div class="ia-bar" id="modalIaBar"></div>
+          </div>
+          <span class="ia-score-val" id="modalIaVal"></span>
         </div>
-      </section>
+      </div>
+      <div class="modal-info">
+        <div class="modal-field"><span class="mf-label">Ciudadano</span><span class="mf-val" id="mfCiudadano"></span></div>
+        <div class="modal-field"><span class="mf-label">Tipo</span><span class="mf-val" id="mfTipo"></span></div>
+        <div class="modal-field"><span class="mf-label">Peso</span><span class="mf-val" id="mfPeso"></span></div>
+        <div class="modal-field"><span class="mf-label">Barrio</span><span class="mf-val" id="mfBarrio"></span></div>
+        <div class="modal-field"><span class="mf-label">Fecha</span><span class="mf-val" id="mfFecha"></span></div>
+        <div class="modal-field"><span class="mf-label">GPS</span><span class="mf-val" id="mfGps"></span></div>
+        <div class="modal-field"><span class="mf-label">COCHAPESOS</span><span class="mf-val" id="mfPuntos"></span></div>
+        <div class="modal-field full"><span class="mf-label">Observación</span><span class="mf-val" id="mfObs"></span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-rechazar" id="btnModalRechazar">✕ Rechazar</button>
+      <button class="btn-modal-editar" id="btnModalEditar">✏️ Editar peso</button>
+      <button class="btn-modal-aprobar" id="btnModalAprobar">✅ Aprobar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECCIÓN: CAMPAÑAS ── -->
+<section id="campanas" class="dash-section">
+
+  <!-- TOOLBAR -->
+  <div class="camp-toolbar">
+    <div class="camp-filters">
+      <select id="filtroEstadoCamp">
+        <option value="todos">Todos los estados</option>
+        <option value="activa">Activas</option>
+        <option value="proxima">Próximas</option>
+        <option value="finalizada">Finalizadas</option>
+      </select>
+      <select id="filtroDistrito">
+        <option value="todos">Todos los distritos</option>
+        <option value="Cercado">Cercado</option>
+        <option value="Quillacollo">Quillacollo</option>
+        <option value="Colcapirhua">Colcapirhua</option>
+        <option value="Sacaba">Sacaba</option>
+        <option value="Tiquipaya">Tiquipaya</option>
+      </select>
+    </div>
+    <button class="btn-nueva-camp" id="btnNuevaCamp">+ Nueva campaña</button>
+  </div>
+
+  <!-- STATS RÁPIDAS -->
+  <div class="camp-stats">
+    <div class="camp-stat-card">
+      <span class="camp-stat-icon">🎯</span>
+      <div>
+        <div class="camp-stat-val" id="csTotalActivas">0</div>
+        <div class="camp-stat-lbl">Campañas activas</div>
+      </div>
+    </div>
+    <div class="camp-stat-card">
+      <span class="camp-stat-icon">👥</span>
+      <div>
+        <div class="camp-stat-val" id="csTotalPart">0</div>
+        <div class="camp-stat-lbl">Participantes totales</div>
+      </div>
+    </div>
+    <div class="camp-stat-card">
+      <span class="camp-stat-icon">♻️</span>
+      <div>
+        <div class="camp-stat-val" id="csTotalKg">0</div>
+        <div class="camp-stat-lbl">kg recolectados en retos</div>
+      </div>
+    </div>
+    <div class="camp-stat-card">
+      <span class="camp-stat-icon">💰</span>
+      <div>
+        <div class="camp-stat-val" id="csTotalCP">0</div>
+        <div class="camp-stat-lbl">COCHAPESOS entregados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID DE CAMPAÑAS -->
+  <div class="camp-grid" id="campGrid">
+    <!-- generado por JS -->
+  </div>
+
+</section>
+
+<!-- MODAL NUEVA CAMPAÑA -->
+<div class="modal-overlay" id="modalCampOverlay">
+  <div class="modal-card" id="modalCampCard" style="max-width:520px;">
+    <button class="modal-close" id="modalCampClose">✕</button>
+    <div class="modal-header">
+      <h2 class="modal-title">Nueva campaña</h2>
+    </div>
+    <div class="modal-camp-form">
+
+      <div class="mf-group">
+        <label>Nombre de la campaña</label>
+        <input type="text" id="campNombre" placeholder="Ej: Gran Limpieza La Cancha"/>
+      </div>
+
+      <div class="mf-row">
+        <div class="mf-group">
+          <label>Distrito</label>
+          <select id="campDistrito">
+            <option>Cercado</option>
+            <option>Quillacollo</option>
+            <option>Colcapirhua</option>
+            <option>Sacaba</option>
+            <option>Tiquipaya</option>
+          </select>
+        </div>
+        <div class="mf-group">
+          <label>Tipo de residuo</label>
+          <select id="campTipo">
+            <option>Todos</option>
+            <option>Orgánico</option>
+            <option>Plástico PET</option>
+            <option>Papel/Cartón</option>
+            <option>Vidrio</option>
+            <option>Metal/Aluminio</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mf-row">
+        <div class="mf-group">
+          <label>Fecha inicio</label>
+          <input type="date" id="campInicio"/>
+        </div>
+        <div class="mf-group">
+          <label>Fecha fin</label>
+          <input type="date" id="campFin"/>
+        </div>
+      </div>
+
+      <div class="mf-row">
+        <div class="mf-group">
+          <label>Meta (kg)</label>
+          <input type="number" id="campMeta" placeholder="500" min="1"/>
+        </div>
+        <div class="mf-group">
+          <label>Bonus COCHAPESOS</label>
+          <input type="number" id="campBonus" placeholder="50" min="0"/>
+        </div>
+      </div>
+
+      <div class="mf-group">
+        <label>Descripción</label>
+        <textarea id="campDesc" rows="3" placeholder="Describe el objetivo del reto..."></textarea>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-rechazar" id="btnCampCancelar">Cancelar</button>
+      <button class="btn-modal-aprobar"  id="btnCampGuardar">✅ Crear campaña</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── SECCIÓN: PREDICCIÓN IA ── -->
+<section id="prediccion" class="dash-section">
+
+  <!-- TOOLBAR -->
+  <div class="pred-toolbar">
+    <div class="pred-filters">
+      <select id="predDistrito">
+        <option value="todos">Todos los distritos</option>
+        <option value="Cercado">Cercado</option>
+        <option value="Quillacollo">Quillacollo</option>
+        <option value="Colcapirhua">Colcapirhua</option>
+        <option value="Sacaba">Sacaba</option>
+        <option value="Tiquipaya">Tiquipaya</option>
+      </select>
+      <select id="predHorizonte">
+        <option value="7">Próximos 7 días</option>
+        <option value="14" selected>Próximos 14 días</option>
+        <option value="30">Próximos 30 días</option>
+      </select>
+    </div>
+    <div class="pred-badge-ia">
+      <span class="pred-ia-dot"></span>
+      Modelo IA activo · Actualizado hace 18 min
+    </div>
+  </div>
+
+  <!-- ALERTA CRÍTICA -->
+  <div class="pred-alerta" id="predAlerta">
+    <span class="pred-alerta-icon">⚠️</span>
+    <div class="pred-alerta-body">
+      <strong>Alerta de saturación inminente</strong>
+      <span>La Cancha · Cercado alcanzará capacidad crítica en <span id="predAlertaDias">3</span> días si no se interviene.</span>
+    </div>
+    <button class="pred-alerta-btn" onclick="document.getElementById('predAlerta').style.display='none'">✕</button>
+  </div>
+
+  <!-- KPI PREDICCIÓN -->
+  <div class="pred-kpis">
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">🔴</div>
+      <div>
+        <div class="pred-kpi-val" id="pkZonasCriticas">0</div>
+        <div class="pred-kpi-lbl">Zonas críticas (7 días)</div>
+      </div>
+    </div>
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">📈</div>
+      <div>
+        <div class="pred-kpi-val" id="pkKgProyectados">0</div>
+        <div class="pred-kpi-lbl">kg proyectados (14 días)</div>
+      </div>
+    </div>
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">🎯</div>
+      <div>
+        <div class="pred-kpi-val" id="pkPrecision">0%</div>
+        <div class="pred-kpi-lbl">Precisión del modelo</div>
+      </div>
+    </div>
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">🏘️</div>
+      <div>
+        <div class="pred-kpi-val" id="pkZonasMonit">0</div>
+        <div class="pred-kpi-lbl">Zonas monitoreadas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRÁFICO PREDICCIÓN -->
+  <div class="charts-row">
+    <div class="chart-card" style="grid-column: 1 / -1;">
+      <div class="chart-header">
+        <div>
+          <h2 class="chart-title">Proyección de acumulación · Próximos 14 días</h2>
+          <p class="chart-sub">Basado en datos históricos, reportes ciudadanos y patrones estacionales</p>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-dot" style="background:#00C853;"></span>Real
+          <span class="legend-dot" style="background:#4FC3F7;margin-left:0.8rem;"></span>Predicción
+          <span class="legend-dot" style="background:rgba(229,57,53,0.5);margin-left:0.8rem;"></span>Límite crítico
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:260px;">
+        <canvas id="chartPrediccion"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA DE ZONAS -->
+  <div class="pred-tabla-wrap">
+    <div class="chart-header" style="margin-bottom:1rem;">
+      <div>
+        <h2 class="chart-title">Riesgo por zona · Próximos 14 días</h2>
+        <p class="chart-sub">Ordenado por nivel de riesgo descendente</p>
+      </div>
+    </div>
+    <table class="reg-table" id="tablaZonas">
+      <thead>
+        <tr>
+          <th>Zona / Barrio</th>
+          <th>Distrito</th>
+          <th>kg actuales</th>
+          <th>kg proyectados</th>
+          <th>Capacidad</th>
+          <th>Riesgo</th>
+          <th>Días para saturación</th>
+          <th>Acción recomendada</th>
+        </tr>
+      </thead>
+      <tbody id="zonasTbody"></tbody>
+    </table>
+  </div>
+
+  <!-- EXPLICACIÓN DEL MODELO -->
+  <div class="pred-modelo-wrap">
+    <div class="pred-modelo-header">
+      <span>🤖</span>
+      <h3>¿Cómo funciona el modelo?</h3>
+    </div>
+    <div class="pred-modelo-grid">
+      <div class="pred-modelo-item">
+        <div class="pred-modelo-icon">📊</div>
+        <div>
+          <strong>Datos históricos</strong>
+          <p>Analiza patrones de los últimos 12 meses de registros por zona y tipo de residuo.</p>
+        </div>
+      </div>
+      <div class="pred-modelo-item">
+        <div class="pred-modelo-icon">📱</div>
+        <div>
+          <strong>Reportes ciudadanos</strong>
+          <p>Incorpora reportes en tiempo real para ajustar la predicción con datos frescos.</p>
+        </div>
+      </div>
+      <div class="pred-modelo-item">
+        <div class="pred-modelo-icon">📅</div>
+        <div>
+          <strong>Patrones estacionales</strong>
+          <p>Considera días de feria, feriados y eventos municipales que elevan la generación.</p>
+        </div>
+      </div>
+      <div class="pred-modelo-item">
+        <div class="pred-modelo-icon">⚡</div>
+        <div>
+          <strong>Actualización continua</strong>
+          <p>El modelo se recalibra cada 30 minutos con los nuevos registros validados.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ── SECCIÓN: RUTAS ÓPTIMAS ── -->
+<section id="rutas" class="dash-section">
+
+  <!-- TOOLBAR -->
+  <div class="rut-toolbar">
+    <div class="rut-filters">
+      <select id="rutDistrito">
+        <option value="todos">Todos los distritos</option>
+        <option value="Cercado">Cercado</option>
+        <option value="Quillacollo">Quillacollo</option>
+        <option value="Colcapirhua">Colcapirhua</option>
+        <option value="Sacaba">Sacaba</option>
+      </select>
+      <select id="rutTurno">
+        <option value="manana">Turno mañana (06:00–12:00)</option>
+        <option value="tarde">Turno tarde (12:00–18:00)</option>
+        <option value="todos" selected>Ambos turnos</option>
+      </select>
+    </div>
+    <div class="rut-acciones">
+      <button class="btn-export" id="btnExportRutas">⬇ Exportar rutas</button>
+      <button class="btn-nueva-camp" id="btnRecalcular">🔄 Recalcular</button>
+    </div>
+  </div>
+
+  <!-- KPIs RUTAS -->
+  <div class="pred-kpis">
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">🚛</div>
+      <div>
+        <div class="pred-kpi-val" id="rkVehiculos">0</div>
+        <div class="pred-kpi-lbl">Vehículos activos hoy</div>
+      </div>
+    </div>
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">📍</div>
+      <div>
+        <div class="pred-kpi-val" id="rkParadas">0</div>
+        <div class="pred-kpi-lbl">Paradas totales</div>
+      </div>
+    </div>
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">🛣️</div>
+      <div>
+        <div class="pred-kpi-val" id="rkKm">0 km</div>
+        <div class="pred-kpi-lbl">Distancia total estimada</div>
+      </div>
+    </div>
+    <div class="pred-kpi-card">
+      <div class="pred-kpi-icon">⏱️</div>
+      <div>
+        <div class="pred-kpi-val" id="rkAhorro">0%</div>
+        <div class="pred-kpi-lbl">Ahorro vs ruta anterior</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAPA + PANEL LATERAL -->
+  <div class="rut-main">
+
+    <!-- PANEL LATERAL: lista de rutas -->
+    <div class="rut-panel">
+      <div class="rut-panel-header">
+        <h3>Rutas del día</h3>
+        <span class="rut-fecha" id="rutFecha"></span>
+      </div>
+      <div class="rut-lista" id="rutLista">
+        <!-- generado por JS -->
+      </div>
+    </div>
+
+    <!-- MAPA -->
+    <div class="rut-mapa-wrap">
+      <div id="mapaRutas" style="height:100%;border-radius:var(--radius-md);overflow:hidden;"></div>
+      <div class="rut-mapa-leyenda">
+        <span class="map-legend-item"><span class="dot" style="background:#00C853;"></span>Punto limpio</span>
+        <span class="map-legend-item"><span class="dot" style="background:#E53935;"></span>Zona crítica</span>
+        <span class="map-legend-item"><span class="dot" style="background:#4FC3F7;"></span>Ruta activa</span>
+        <span class="map-legend-item"><span class="dot" style="background:#ffa500;"></span>Planta Cotapachi</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TABLA DETALLE PARADAS -->
+  <div class="pred-tabla-wrap" style="margin-top:1.2rem;">
+    <div class="chart-header" style="margin-bottom:1rem;">
+      <div>
+        <h2 class="chart-title">Detalle de paradas · Ruta seleccionada</h2>
+        <p class="chart-sub" id="rutDetalleLabel">Seleccioná una ruta del panel izquierdo</p>
+      </div>
+    </div>
+    <table class="reg-table" id="tablaParadas">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Zona / Punto</th>
+          <th>Hora estimada</th>
+          <th>kg a recolectar</th>
+          <th>Prioridad</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="paradasTbody">
+        <tr>
+          <td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;">
+            Seleccioná una ruta para ver el detalle de paradas
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
 
     </main>
   </div><!-- /main-wrapper -->
