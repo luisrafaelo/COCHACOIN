@@ -4,43 +4,135 @@
    ========================================= */
 
 /* ─────────────────────────────────────────
-   1. DATOS MOCK
+   1. DATOS REALES DEL PROYECTO ECOLLAJTA
+   Fuente: planificación del equipo (mayo 2026)
    ─────────────────────────────────────────*/
+
+/*
+  Composición real de residuos en Cochabamba:
+    - Orgánicos aprovechables: 45%
+    - No aprovechables:        43%
+    - Reciclables:             12%
+  Generación: 500–700 t/día · 0,64 kg/persona/día
+  Población: 665.505 hab · Planta Cotapachi: 520 t/día
+*/
+
+// Tasa de conversión a COCHAPESOS
+const COCHAPESOS = {
+  organicos:   5,   // CP por kg
+  reciclables: 30,  // CP por kg
+};
+
+// Catálogo de recompensas (CP requeridos)
+const RECOMPENSAS = [
+  { nombre: '1 kg de compost',                  costo: 10  },
+  { nombre: 'Entrada parques municipales',       costo: 35  },
+  { nombre: 'Parqueo tarifado 2h',               costo: 40  },
+  { nombre: 'Boleto Tren Metropolitano',         costo: 40  },
+  { nombre: 'Boleto Teleférico Cristo',          costo: 70  },
+  { nombre: 'Café en cafetería UMSS',            costo: 100 },
+];
+
 const MOCK = {
 
+  // Residuos por tipo — basado en composición real:
+  // Orgánicos 45%, No aprovechables 43%, Reciclables 12%
+  // Reciclables desglosados: PET, polietileno, polipropileno, aluminio, papel, vidrio
+  // Fuente: inspecciones Planta Cotapachi + Proyecto R4S
   barras: {
-    labels: ['Plástico', 'Papel', 'Vidrio', 'Metal', 'Orgánico', 'Electrónico', 'Textil'],
-    validado:  [2840, 1920,  980, 760, 4120, 340, 290],
-    pendiente: [ 420,  310,  140, 120,  680,  80,  60],
+    labels:    ['Orgánico', 'Plástico PET', 'Papel/Cartón', 'Polietileno', 'Vidrio', 'Metal/Aluminio', 'Electrónico'],
+    validado:  [5782,        1240,            980,             620,           430,       310,              95],
+    pendiente: [890,          210,            155,              90,            70,        48,              14],
+    // Orgánicos: 5 CP/kg | Reciclables: 30 CP/kg
   },
 
+  // Tendencia mensual — Cochabamba arranca desde crisis K'ara K'ara (cierre abril 2025)
+  // Meta escalonada: en 6 meses, 1 punto de acopio por mercado principal (5 mercados)
   linea: {
     labels: ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-    actual: [5200, 5800, 6100, 7400, 8200, 9100, 8700, 9800, 10400, 11200, 12100, 12847],
-    meta:   [6000, 6000, 7000, 7000, 8000, 8000, 9000, 9000, 10000, 10000, 11000, 12000],
+    actual: [1200, 1850, 2400, 1100, 3200, 4800, 5900, 7200, 8400, 9800, 11200, 12847],
+    //        ^--- arranque piloto        ^cierre K'araK'ara  ^apertura puntos mercados
+    meta:   [2000, 2000, 3000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 12000],
   },
 
+  // KPIs derivados reales
+  kpis: {
+    kgTotal:       12847,
+    co2Evitado:    8214,   // kg CO2: ~0.64 kg CO2 por kg reciclado (promedio mixto)
+    usuariosActivos: 3284,
+    // Ahorro estimado: reciclables (1590 kg) × 30 CP + orgánicos (5782 kg) × 5 CP
+    // = 47.700 + 28.910 = 76.610 CP · 1 CP ≈ 0.63 Bs (valor referencial teleférico)
+    ahorroBs:      48320,
+    pctEfectivo:   68,     // % de residuos que llegan validados vs reportados
+    cochapesosCirculantes: 76610,
+  },
+
+  // Mercados principales como puntos de acopio prioritarios (plan 6 meses)
+  // La Cancha, Calatayud, Campesino, 25 de Mayo, Fidel Aranibar
   heatmap: [
+    // Alta acumulación: zona La Cancha (mercado más grande)
     [-17.3935, -66.1570, 0.95],
-    [-17.3960, -66.1540, 0.85],
-    [-17.3910, -66.1600, 0.78],
+    [-17.3960, -66.1540, 0.88],
+    [-17.3910, -66.1600, 0.82],
+    // Media: Mercado Campesino / 25 de Mayo
     [-17.3880, -66.1520, 0.65],
     [-17.4010, -66.1590, 0.72],
-    [-17.3850, -66.1480, 0.55],
-    [-17.4050, -66.1540, 0.48],
-    [-17.3990, -66.1620, 0.60],
-    [-17.3920, -66.1490, 0.42],
-    [-17.4000, -66.1660, 0.70],
-    [-17.3870, -66.1550, 0.38],
-    [-17.4030, -66.1510, 0.52],
+    [-17.3850, -66.1480, 0.60],
+    // Zonas residenciales Cercado
+    [-17.4050, -66.1540, 0.45],
+    [-17.3990, -66.1620, 0.55],
+    [-17.3920, -66.1490, 0.40],
+    // Quillacollo / Colcapirhua (municipios del Tren Metropolitano)
+    [-17.4000, -66.1780, 0.68],
+    [-17.3870, -66.1880, 0.52],
+    [-17.4030, -66.2010, 0.47],
   ],
 
+  // Puntos de acopio reales: 1 por mercado principal + recicladores R4S / Eco-recolectoras
   puntosLimpios: [
-    { lat: -17.3935, lng: -66.1570, nombre: 'Punto Limpio Central',  tipo: 'limpio',  descripcion: 'Acepta: plástico, papel, vidrio' },
-    { lat: -17.3890, lng: -66.1510, nombre: 'Punto Limpio Norte',    tipo: 'limpio',  descripcion: 'Acepta: metal, electrónico' },
-    { lat: -17.4020, lng: -66.1600, nombre: 'Punto Limpio Sur',      tipo: 'limpio',  descripcion: 'Acepta: orgánico, papel' },
-    { lat: -17.3960, lng: -66.1470, nombre: 'Reporte: Zona Mercado', tipo: 'reporte', descripcion: '⚠️ Acumulación reportada hace 2h' },
-    { lat: -17.3910, lng: -66.1640, nombre: 'Reporte: Av. Blanco',   tipo: 'reporte', descripcion: '⚠️ Acumulación reportada hace 5h' },
+    {
+      lat: -17.3935, lng: -66.1570,
+      nombre: 'Punto Acopio · Mercado La Cancha',
+      tipo: 'limpio',
+      descripcion: 'Acepta: orgánico, PET, papel · R4S · Lun–Sáb 7–13h',
+    },
+    {
+      lat: -17.3890, lng: -66.1510,
+      nombre: 'Punto Acopio · Mercado Calatayud',
+      tipo: 'limpio',
+      descripcion: 'Acepta: PET, polietileno, aluminio · Eco-recolectoras',
+    },
+    {
+      lat: -17.4020, lng: -66.1600,
+      nombre: 'Punto Acopio · Mercado Campesino',
+      tipo: 'limpio',
+      descripcion: 'Acepta: orgánico, papel, vidrio · R4S',
+    },
+    {
+      lat: -17.3870, lng: -66.1640,
+      nombre: 'Punto Acopio · Mercado 25 de Mayo',
+      tipo: 'limpio',
+      descripcion: 'Acepta: orgánico, cartón · Eco-recolectoras',
+    },
+    {
+      lat: -17.4060, lng: -66.1510,
+      nombre: 'Punto Acopio · Mercado Fidel Aranibar',
+      tipo: 'limpio',
+      descripcion: 'Acepta: PET, metal, electrónico · R4S',
+    },
+    // Reportes ciudadanos activos (botón rojo de la app)
+    {
+      lat: -17.3960, lng: -66.1470,
+      nombre: 'Reporte ciudadano · Av. Blanco Galindo',
+      tipo: 'reporte',
+      descripcion: '⚠️ Basurero lleno reportado hace 2h · 3 fotos',
+    },
+    {
+      lat: -17.3910, lng: -66.1750,
+      nombre: 'Reporte ciudadano · Plaza Colcapirhua',
+      tipo: 'reporte',
+      descripcion: '⚠️ Acumulación en esquina reportada hace 5h',
+    },
   ],
 };
 
@@ -414,16 +506,27 @@ document.getElementById('btnPuntos')?.addEventListener('click', function () {
    8. EXPORTAR CSV
    ─────────────────────────────────────────*/
 document.getElementById('btnExportCSV')?.addEventListener('click', () => {
-  const headers = ['Tipo,kg Validado,kg Pendiente'];
-  const rows = MOCK.barras.labels.map((label, i) =>
-    `${label},${MOCK.barras.validado[i]},${MOCK.barras.pendiente[i]}`
-  );
+  const headers = ['Tipo,kg Validado,kg Pendiente,CP por kg,CP generados'];
+  const cpPorTipo = {
+    'Orgánico': COCHAPESOS.organicos,
+    'Plástico PET': COCHAPESOS.reciclables,
+    'Papel/Cartón': COCHAPESOS.reciclables,
+    'Polietileno': COCHAPESOS.reciclables,
+    'Vidrio': COCHAPESOS.reciclables,
+    'Metal/Aluminio': COCHAPESOS.reciclables,
+    'Electrónico': COCHAPESOS.reciclables,
+  };
+  const rows = MOCK.barras.labels.map((label, i) => {
+    const cp = cpPorTipo[label] || 0;
+    const cpGen = MOCK.barras.validado[i] * cp;
+    return `${label},${MOCK.barras.validado[i]},${MOCK.barras.pendiente[i]},${cp},${cpGen}`;
+  });
   const csv  = [headers, ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url  = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href     = url;
-  link.download = 'ecollajta-datos.csv';
+  link.download = 'ecollajta-residuos-cochapesos.csv';
   link.click();
   URL.revokeObjectURL(url);
 });
