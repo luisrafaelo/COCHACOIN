@@ -616,7 +616,7 @@ button { cursor: pointer; font-family: var(--font-body); }
 @media (max-width: 900px) {
   .mapa-titulo { display: none; }
   .mapa-nav-link { display: none; }
-  .mapa-nav-btn { display: none; }
+  .mapa-nav-btn { display: none !important; 
   .mapa-hamburguesa { display: block; }
 
   .mapa-logo-text { font-size: 0.9rem; }
