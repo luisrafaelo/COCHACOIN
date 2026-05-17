@@ -16,7 +16,14 @@
   Generación: 500–700 t/día · 0,64 kg/persona/día
   Población: 665.505 hab · Planta Cotapachi: 520 t/día
 */
-
+/* — Verificación de sesión — */
+(function() {
+  const sesion = sessionStorage.getItem('ecollajta_session');
+  const rol    = sessionStorage.getItem('ecollajta_rol');
+  if (!sesion || rol !== 'municipio') {
+    window.location.href = 'login.html';
+  }
+})();
 // Tasa de conversión a COCHAPESOS
 const COCHAPESOS = {
   organicos:   5,   // CP por kg
@@ -176,6 +183,19 @@ navItems.forEach(item => {
     if (topbarTitle) topbarTitle.textContent = sectionNames[target] || target;
 
     sidebar?.classList.remove('open');
+        /* FIX MAPAS — invalidar tamaño al mostrar sección */
+    setTimeout(() => {
+      if (target === 'overview' && mapa) {
+        mapa.invalidateSize();
+      }
+      if (target === 'rutas') {
+        if (mapaRutas) {
+          mapaRutas.invalidateSize();
+        } else {
+          initMapaRutas();
+        }
+      }
+    }, 80);
   });
 });
 
@@ -483,6 +503,8 @@ if (mapaEl) {
   const mapaObserver = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting) {
       initMapa();
+      /* FIX — forzar redibujado tras render */
+      setTimeout(() => { if (mapa) mapa.invalidateSize(); }, 200);
       mapaObserver.disconnect();
     }
   }, { threshold: 0.1 });
@@ -1621,15 +1643,3 @@ document.getElementById('btnExportRutas')?.addEventListener('click', () => {
 /* — Render inicial — */
 renderRutKpis();
 renderRutLista();
-
-/* Iniciar mapa cuando la sección sea visible */
-const rutSeccion = document.getElementById('rutas');
-if (rutSeccion) {
-  const rutObs = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) {
-      setTimeout(initMapaRutas, 100);
-      rutObs.disconnect();
-    }
-  }, { threshold: 0.1 });
-  rutObs.observe(rutSeccion);
-}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECO-LLAJTA · Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+  <div class="login-bg">
+    <div class="login-wrapper">
+
+      <!-- LOGO -->
+      <div class="login-logo">
+        <div class="login-logo-icon">
+          <img src="assets/eco.png" alt="ECOLLAJTA" onerror="this.parentElement.innerHTML='🌿'"/>
+        </div>
+        <div>
+          <span class="login-logo-text">ECO<em>LLAJTA</em></span>
+          <span class="login-logo-sub">Plataforma de gestión de residuos</span>
+        </div>
+      </div>
+
+      <!-- CARD -->
+      <div class="login-card">
+
+        <div class="login-card-header">
+          <h1 class="login-title">Bienvenido</h1>
+          <p class="login-sub">Seleccioná tu rol para continuar</p>
+        </div>
+
+        <!-- SELECTOR DE ROL -->
+        <div class="rol-grid">
+          <button class="rol-btn active" data-rol="municipio">
+            <span class="rol-icon">🏛️</span>
+            <span class="rol-label">Municipio</span>
+            <span class="rol-desc">Panel de gestión</span>
+          </button>
+          <button class="rol-btn" data-rol="ciudadano">
+            <span class="rol-icon">👤</span>
+            <span class="rol-label">Ciudadano</span>
+            <span class="rol-desc">App de reciclaje</span>
+          </button>
+          <button class="rol-btn" data-rol="reciclador">
+            <span class="rol-icon">♻️</span>
+            <span class="rol-label">Reciclador</span>
+            <span class="rol-desc">Panel de retiros</span>
+          </button>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div class="login-form">
+          <div class="form-group">
+            <label for="usuario">Usuario</label>
+            <input
+              type="text"
+              id="usuario"
+              placeholder="Ingresá tu usuario"
+              autocomplete="username"
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <div class="pass-wrap">
+              <input
+                type="password"
+                id="password"
+                placeholder="Ingresá tu contraseña"
+                autocomplete="current-password"
+              />
+              <button class="pass-toggle" id="passToggle" type="button" aria-label="Mostrar contraseña">👁</button>
+            </div>
+          </div>
+
+          <!-- CREDENCIALES DEMO -->
+          <div class="demo-hint" id="demoHint">
+            <span class="demo-hint-icon">💡</span>
+            <span id="demoHintText">usuario: <strong>admin</strong> · contraseña: <strong>eco2026</strong></span>
+          </div>
+
+          <!-- ERROR -->
+          <div class="login-error" id="loginError">
+            ✕ Usuario o contraseña incorrectos
+          </div>
+
+          <!-- BOTÓN -->
+          <button class="btn-login" id="btnLogin">
+            Ingresar →
+          </button>
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <p class="login-footer">
+        © 2026 ECOLLAJTA · Cochabamba, Bolivia
+        <a href="index.html">← Volver al sitio</a>
+      </p>
+
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
