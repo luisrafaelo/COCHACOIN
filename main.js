@@ -66,14 +66,12 @@ if (statsBar) {
   }, { threshold: 0.4 });
   statsObserver.observe(statsBar);
 }
-
-
 /* ----- 4. NAVBAR: sombra al hacer scroll ----- */
 const navbar = document.getElementById('navbar');
 if (navbar) {
   window.addEventListener('scroll', () => {
     if (window.scrollY > 20) {
-      navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.4)';
+      navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.52)';
     } else {
       navbar.style.boxShadow = 'none';
     }
