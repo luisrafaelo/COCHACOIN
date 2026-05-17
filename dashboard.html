@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>COCHACOIN · Dashboard Municipal</title>
+  <title>ECOLLAJTA · Dashboard Municipal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <!-- Leaflet CSS -->
@@ -16,9 +16,11 @@
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <div class="logo-icon">🌿</div>
+        <div class="logo-icon">
+          <img src="assets/eco.png" alt="ECOLLAJTA Logo" onerror="this.parentElement.innerHTML='🌿'">
+        </div>
         <div>
-          <span class="logo-text">COCHA<em>COIN</em></span>
+          <span class="logo-text">ECO<span>LLAJTA</span></span>
           <span class="logo-sub">Panel Municipal</span>
         </div>
       </div>
@@ -27,20 +29,20 @@
 
     <nav class="sidebar-nav">
       <span class="nav-section-label">Principal</span>
-      <a href="#overview"    class="nav-item active" data-section="overview">
+      <a href="#overview" class="nav-item active" data-section="overview">
         <span class="nav-icon">📊</span> Resumen general
       </a>
-      <a href="#registros"   class="nav-item" data-section="registros">
+      <a href="#registros" class="nav-item" data-section="registros">
         <span class="nav-icon">📋</span> Registros
         <span class="nav-badge">12</span>
       </a>
-      <a href="#campanas"    class="nav-item" data-section="campanas">
+      <a href="#campanas" class="nav-item" data-section="campanas">
         <span class="nav-icon">🎯</span> Campañas y retos
       </a>
-      <a href="#prediccion"  class="nav-item" data-section="prediccion">
+      <a href="#prediccion" class="nav-item" data-section="prediccion">
         <span class="nav-icon">🔮</span> Predicción IA
       </a>
-      <a href="#rutas"       class="nav-item" data-section="rutas">
+      <a href="#rutas" class="nav-item" data-section="rutas">
         <span class="nav-icon">🛣️</span> Rutas óptimas
       </a>
 
@@ -103,7 +105,7 @@
         <!-- KPI CARDS -->
         <div class="kpi-grid">
           <div class="kpi-card" data-animate>
-            <div class="kpi-icon" style="background:rgba(102,187,106,0.12);">♻️</div>
+            <div class="kpi-icon" style="background:rgba(0,200,83,0.12);">♻️</div>
             <div class="kpi-body">
               <span class="kpi-label">Total kg recolectados</span>
               <span class="kpi-value" data-count="12847">0</span>
@@ -111,7 +113,7 @@
             </div>
           </div>
           <div class="kpi-card" data-animate data-delay="80">
-            <div class="kpi-icon" style="background:rgba(2,136,209,0.12);">🌫️</div>
+            <div class="kpi-icon" style="background:rgba(79,195,247,0.12);">🌫️</div>
             <div class="kpi-body">
               <span class="kpi-label">CO₂ evitado (kg)</span>
               <span class="kpi-value" data-count="8214">0</span>
@@ -119,7 +121,7 @@
             </div>
           </div>
           <div class="kpi-card" data-animate data-delay="160">
-            <div class="kpi-icon" style="background:rgba(141,110,99,0.12);">👥</div>
+            <div class="kpi-icon" style="background:rgba(105,240,174,0.10);">👥</div>
             <div class="kpi-body">
               <span class="kpi-label">Usuarios activos</span>
               <span class="kpi-value" data-count="3284">0</span>
@@ -127,7 +129,7 @@
             </div>
           </div>
           <div class="kpi-card" data-animate data-delay="240">
-            <div class="kpi-icon" style="background:rgba(46,125,50,0.12);">💰</div>
+            <div class="kpi-icon" style="background:rgba(0,200,83,0.12);">💰</div>
             <div class="kpi-body">
               <span class="kpi-label">Ahorro estimado (Bs)</span>
               <span class="kpi-value" data-count="48320" data-prefix="Bs ">0</span>
@@ -135,7 +137,7 @@
             </div>
           </div>
           <div class="kpi-card" data-animate data-delay="320">
-            <div class="kpi-icon" style="background:rgba(102,187,106,0.12);">📦</div>
+            <div class="kpi-icon" style="background:rgba(79,195,247,0.12);">📦</div>
             <div class="kpi-body">
               <span class="kpi-label">% Reciclaje efectivo</span>
               <span class="kpi-value" data-count="68" data-suffix="%">0</span>
@@ -144,10 +146,8 @@
           </div>
         </div>
 
-        <!-- GRÁFICOS: BARRAS + LÍNEA -->
+        <!-- GRÁFICOS -->
         <div class="charts-row">
-
-          <!-- Barras por tipo de residuo -->
           <div class="chart-card" data-animate>
             <div class="chart-header">
               <div>
@@ -155,8 +155,8 @@
                 <p class="chart-sub">Kilogramos registrados este periodo</p>
               </div>
               <div class="chart-legend">
-                <span class="legend-dot" style="background:#66BB6A;"></span>Validado
-                <span class="legend-dot" style="background:#0288D1;margin-left:0.8rem;"></span>Pendiente
+                <span class="legend-dot" style="background:#00C853;"></span>Validado
+                <span class="legend-dot" style="background:#4FC3F7;margin-left:0.8rem;"></span>Pendiente
               </div>
             </div>
             <div class="chart-wrap">
@@ -164,7 +164,6 @@
             </div>
           </div>
 
-          <!-- Línea tendencia mensual -->
           <div class="chart-card" data-animate data-delay="100">
             <div class="chart-header">
               <div>
@@ -194,14 +193,14 @@
           <div class="map-legend">
             <span class="map-legend-item"><span class="dot" style="background:#ff4d4d;"></span>Alta acumulación</span>
             <span class="map-legend-item"><span class="dot" style="background:#ffa500;"></span>Media</span>
-            <span class="map-legend-item"><span class="dot" style="background:#66BB6A;"></span>Punto limpio</span>
-            <span class="map-legend-item"><span class="dot" style="background:#0288D1;"></span>Reporte ciudadano</span>
+            <span class="map-legend-item"><span class="dot" style="background:#00C853;"></span>Punto limpio</span>
+            <span class="map-legend-item"><span class="dot" style="background:#4FC3F7;"></span>Reporte ciudadano</span>
           </div>
         </div>
 
       </section><!-- /overview -->
 
-      <!-- ── SECCIÓN: REGISTROS (placeholder) ── -->
+      <!-- ── SECCIÓN: REGISTROS ── -->
       <section id="registros" class="dash-section">
         <div class="coming-soon">
           <span>📋</span>
@@ -210,7 +209,7 @@
         </div>
       </section>
 
-      <!-- ── SECCIÓN: CAMPAÑAS (placeholder) ── -->
+      <!-- ── SECCIÓN: CAMPAÑAS ── -->
       <section id="campanas" class="dash-section">
         <div class="coming-soon">
           <span>🎯</span>
@@ -219,7 +218,7 @@
         </div>
       </section>
 
-      <!-- ── SECCIÓN: PREDICCIÓN (placeholder) ── -->
+      <!-- ── SECCIÓN: PREDICCIÓN ── -->
       <section id="prediccion" class="dash-section">
         <div class="coming-soon">
           <span>🔮</span>
@@ -228,7 +227,7 @@
         </div>
       </section>
 
-      <!-- ── SECCIÓN: RUTAS (placeholder) ── -->
+      <!-- ── SECCIÓN: RUTAS ── -->
       <section id="rutas" class="dash-section">
         <div class="coming-soon">
           <span>🛣️</span>
