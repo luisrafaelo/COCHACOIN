@@ -168,6 +168,7 @@ const sectionNames = {
   campanas:   'Campañas y retos',
   prediccion: 'Predicción IA',
   rutas:      'Rutas óptimas',
+  usuarios: 'Usuarios y roles',
 };
 
 navItems.forEach(item => {
@@ -1664,3 +1665,234 @@ document.getElementById('btnExportRutas')?.addEventListener('click', () => {
 /* — Render inicial — */
 renderRutKpis();
 renderRutLista();
+/* ═══════════════════════════════════════
+   SECCIÓN USUARIOS Y ROLES
+   ═══════════════════════════════════════ */
+
+const ROLES_DEF = [
+  {
+    id: 'admin',
+    nombre: 'Administrador',
+    icon: '👑',
+    iconBg: 'rgba(0,200,83,0.12)',
+    desc: 'Acceso total al sistema municipal',
+    permisos: [
+      { seccion: '📊 Resumen general',  nivel: 'total',        label: 'Completo'     },
+      { seccion: '📋 Registros',        nivel: 'total',        label: 'Completo'     },
+      { seccion: '🎯 Campañas',         nivel: 'total',        label: 'Completo'     },
+      { seccion: '🔮 Predicción IA',    nivel: 'total',        label: 'Completo'     },
+      { seccion: '🛣️ Rutas óptimas',    nivel: 'total',        label: 'Completo'     },
+      { seccion: '👥 Usuarios y roles', nivel: 'total',        label: 'Completo'     },
+    ],
+  },
+  {
+    id: 'supervisor',
+    nombre: 'Supervisor',
+    icon: '🧑‍💼',
+    iconBg: 'rgba(79,195,247,0.12)',
+    desc: 'Gestión operativa por distrito',
+    permisos: [
+      { seccion: '📊 Resumen general',  nivel: 'total',        label: 'Completo'     },
+      { seccion: '📋 Registros',        nivel: 'parcial',      label: 'Aprobar/Ver'  },
+      { seccion: '🎯 Campañas',         nivel: 'parcial',      label: 'Ver y editar' },
+      { seccion: '🔮 Predicción IA',    nivel: 'solo-lectura', label: 'Solo lectura' },
+      { seccion: '🛣️ Rutas óptimas',    nivel: 'parcial',      label: 'Ver y exportar'},
+      { seccion: '👥 Usuarios y roles', nivel: 'sin-acceso',   label: 'Sin acceso'   },
+    ],
+  },
+  {
+    id: 'operador',
+    nombre: 'Operador',
+    icon: '🚛',
+    iconBg: 'rgba(168,199,230,0.08)',
+    desc: 'Validación de registros en campo',
+    permisos: [
+      { seccion: '📊 Resumen general',  nivel: 'solo-lectura', label: 'Solo lectura' },
+      { seccion: '📋 Registros',        nivel: 'parcial',      label: 'Validar'      },
+      { seccion: '🎯 Campañas',         nivel: 'solo-lectura', label: 'Solo lectura' },
+      { seccion: '🔮 Predicción IA',    nivel: 'sin-acceso',   label: 'Sin acceso'   },
+      { seccion: '🛣️ Rutas óptimas',    nivel: 'solo-lectura', label: 'Solo lectura' },
+      { seccion: '👥 Usuarios y roles', nivel: 'sin-acceso',   label: 'Sin acceso'   },
+    ],
+  },
+];
+
+const USUARIOS_MOCK = [
+  { id:1, nombre:'Admin Municipal',    email:'admin@cochabamba.gob.bo',      rol:'admin',      distrito:'Todos',       activo:true,  ultimo:'Hace 2 min'  },
+  { id:2, nombre:'Carmen Villanueva', email:'cvillanueva@cochabamba.gob.bo', rol:'supervisor', distrito:'Cercado',     activo:true,  ultimo:'Hace 15 min' },
+  { id:3, nombre:'Roberto Salinas',   email:'rsalinas@cochabamba.gob.bo',    rol:'supervisor', distrito:'Quillacollo', activo:true,  ultimo:'Hace 1h'     },
+  { id:4, nombre:'Patricia Quispe',   email:'pquispe@cochabamba.gob.bo',     rol:'operador',   distrito:'Cercado',     activo:true,  ultimo:'Hace 3h'     },
+  { id:5, nombre:'Miguel Torrez',     email:'mtorrez@cochabamba.gob.bo',     rol:'operador',   distrito:'Colcapirhua', activo:false, ultimo:'Hace 2 días' },
+  { id:6, nombre:'Sandra Flores',     email:'sflores@cochabamba.gob.bo',     rol:'operador',   distrito:'Sacaba',      activo:true,  ultimo:'Hace 30 min' },
+];
+
+let usrFiltrados = [...USUARIOS_MOCK];
+
+/* — Render tarjetas de roles — */
+function renderRolCards() {
+  const contAdmin = USUARIOS_MOCK.filter(u => u.rol === 'admin').length;
+  const contSup   = USUARIOS_MOCK.filter(u => u.rol === 'supervisor').length;
+  const contOper  = USUARIOS_MOCK.filter(u => u.rol === 'operador').length;
+  const contadores = { admin: contAdmin, supervisor: contSup, operador: contOper };
+
+  const wrap = document.getElementById('rolesLayout');
+  if (!wrap) return;
+
+  wrap.innerHTML = ROLES_DEF.map(rol => `
+    <div class="rol-card">
+      <div class="rol-card-header">
+        <div class="rol-icon" style="background:${rol.iconBg};">${rol.icon}</div>
+        <div>
+          <div class="rol-nombre">${rol.nombre}</div>
+          <div class="rol-desc">${rol.desc}</div>
+        </div>
+        <div class="rol-count">${contadores[rol.id]}</div>
+      </div>
+      <div class="rol-permisos">
+        ${rol.permisos.map(p => `
+          <div class="permiso-row">
+            <span class="permiso-label">${p.seccion}</span>
+            <span class="permiso-nivel ${p.nivel}">${p.label}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+/* — Render tabla usuarios — */
+function renderUsrTabla() {
+  const tbody = document.getElementById('usrTbody');
+  if (!tbody) return;
+
+  const ROL_LABEL = { admin:'👑 Admin', supervisor:'🧑‍💼 Supervisor', operador:'🚛 Operador' };
+
+  tbody.innerHTML = usrFiltrados.map(u => `
+    <tr>
+      <td>
+        <div class="ciu-wrap">
+          <div class="ciu-avatar">${u.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}</div>
+          <div>
+            <div class="ciu-name">${u.nombre}</div>
+            <div class="ciu-email">${u.email}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="usr-badge ${u.rol}">${ROL_LABEL[u.rol]}</span></td>
+      <td style="color:var(--muted);font-size:0.82rem;">${u.distrito}</td>
+      <td>
+        <div class="usr-activo">
+          <div class="usr-dot ${u.activo ? 'activo' : 'inactivo'}"></div>
+          <span style="color:${u.activo ? 'var(--verde-suave)' : 'var(--muted)'};">
+            ${u.activo ? 'Activo' : 'Inactivo'}
+          </span>
+        </div>
+      </td>
+      <td style="color:var(--muted);font-size:0.78rem;">${u.ultimo}</td>
+      <td>
+        <div class="acc-btns">
+          <button class="acc-btn ver" onclick="cambiarRolModal(${u.id})" title="Cambiar rol">✏️</button>
+          <button class="acc-btn ${u.activo ? 'rechazar' : 'aprobar'}"
+            onclick="toggleUsrActivo(${u.id})"
+            title="${u.activo ? 'Desactivar' : 'Activar'}">
+            ${u.activo ? '⏸' : '▶'}
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  document.getElementById('usrCount').textContent =
+    `${usrFiltrados.length} usuario${usrFiltrados.length !== 1 ? 's' : ''}`;
+}
+
+/* — Filtros — */
+function aplicarFiltrosUsr() {
+  const rol    = document.getElementById('usrFiltroRol')?.value   || 'todos';
+  const buscar = (document.getElementById('usrBuscar')?.value     || '').toLowerCase();
+
+  usrFiltrados = USUARIOS_MOCK.filter(u => {
+    const okRol    = rol === 'todos' || u.rol === rol;
+    const okBuscar = !buscar ||
+      u.nombre.toLowerCase().includes(buscar) ||
+      u.email.toLowerCase().includes(buscar)  ||
+      u.distrito.toLowerCase().includes(buscar);
+    return okRol && okBuscar;
+  });
+  renderUsrTabla();
+}
+
+/* — Toggle activo/inactivo — */
+window.toggleUsrActivo = function(id) {
+  const u = USUARIOS_MOCK.find(u => u.id === id);
+  if (!u) return;
+  if (u.rol === 'admin') { alert('No podés desactivar al administrador principal.'); return; }
+  u.activo = !u.activo;
+  u.ultimo = 'Ahora';
+  aplicarFiltrosUsr();
+  renderRolCards();
+};
+
+/* — Modal cambiar rol — */
+window.cambiarRolModal = function(id) {
+  const u = USUARIOS_MOCK.find(u => u.id === id);
+  if (!u) return;
+  document.getElementById('invNombre').value = u.nombre;
+  document.getElementById('invEmail').value  = u.email;
+  document.getElementById('invRol').value    = u.rol;
+  document.getElementById('invDistrito').value = u.distrito;
+  document.getElementById('modalInvTitle').textContent = 'Editar usuario';
+  document.getElementById('btnInvGuardar').onclick = () => {
+    u.rol      = document.getElementById('invRol').value;
+    u.distrito = document.getElementById('invDistrito').value;
+    u.ultimo   = 'Ahora';
+    cerrarModalInv();
+    aplicarFiltrosUsr();
+    renderRolCards();
+  };
+  document.getElementById('modalInvOverlay').classList.add('open');
+};
+
+/* — Modal invitar — */
+document.getElementById('btnInvitar')?.addEventListener('click', () => {
+  ['invNombre','invEmail'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('invRol').value      = 'operador';
+  document.getElementById('invDistrito').value = 'Cercado';
+  document.getElementById('modalInvTitle').textContent = 'Invitar usuario';
+  document.getElementById('btnInvGuardar').onclick = () => {
+    const nombre = document.getElementById('invNombre')?.value.trim();
+    const email  = document.getElementById('invEmail')?.value.trim();
+    if (!nombre || !email) { alert('Completá nombre y email.'); return; }
+    USUARIOS_MOCK.push({
+      id:       USUARIOS_MOCK.length + 1,
+      nombre,
+      email,
+      rol:      document.getElementById('invRol').value,
+      distrito: document.getElementById('invDistrito').value,
+      activo:   false,
+      ultimo:   'Invitación pendiente',
+    });
+    cerrarModalInv();
+    aplicarFiltrosUsr();
+    renderRolCards();
+  };
+  document.getElementById('modalInvOverlay').classList.add('open');
+});
+
+function cerrarModalInv() {
+  document.getElementById('modalInvOverlay')?.classList.remove('open');
+}
+document.getElementById('modalInvClose')?.addEventListener('click', cerrarModalInv);
+document.getElementById('modalInvOverlay')?.addEventListener('click', function(e) {
+  if (e.target === this) cerrarModalInv();
+});
+
+document.getElementById('usrFiltroRol')?.addEventListener('change', aplicarFiltrosUsr);
+document.getElementById('usrBuscar')?.addEventListener('input',    aplicarFiltrosUsr);
+
+/* — Render inicial — */
+renderRolCards();
+renderUsrTabla();

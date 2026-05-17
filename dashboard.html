@@ -47,9 +47,9 @@
       </a>
 
       <span class="nav-section-label" style="margin-top:1.5rem;">Configuración</span>
-      <a href="#" class="nav-item">
-        <span class="nav-icon">👥</span> Usuarios y roles
-      </a>
+<a href="#usuarios" class="nav-item" data-section="usuarios">
+  <span class="nav-icon">👥</span> Usuarios y roles
+</a>
       <a href="index.html" class="nav-item">
         <span class="nav-icon">🌐</span> Ir al sitio público
       </a>
@@ -704,7 +704,92 @@
   </div>
 
 </section>
+<!-- ── SECCIÓN: USUARIOS Y ROLES ── -->
+<section id="usuarios" class="dash-section">
 
+  <!-- TARJETAS DE ROLES -->
+  <div class="roles-layout" id="rolesLayout">
+    <!-- generado por JS -->
+  </div>
+
+  <!-- TOOLBAR USUARIOS -->
+  <div class="usr-toolbar">
+    <div class="usr-toolbar-left">
+      <select id="usrFiltroRol">
+        <option value="todos">Todos los roles</option>
+        <option value="admin">Administrador</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="operador">Operador</option>
+      </select>
+      <input type="text" id="usrBuscar" placeholder="🔍 Buscar usuario o distrito..."/>
+      <span id="usrCount" style="font-size:0.78rem;color:var(--muted);"></span>
+    </div>
+    <button class="btn-nueva-camp" id="btnInvitar">+ Invitar usuario</button>
+  </div>
+
+  <!-- TABLA USUARIOS -->
+  <div class="usr-table-wrap">
+    <table class="reg-table">
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Distrito</th>
+          <th>Estado</th>
+          <th>Última actividad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="usrTbody"></tbody>
+    </table>
+  </div>
+
+</section>
+
+<!-- MODAL INVITAR / EDITAR USUARIO -->
+<div class="modal-overlay" id="modalInvOverlay">
+  <div class="modal-card" style="max-width:460px;">
+    <button class="modal-close" id="modalInvClose">✕</button>
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalInvTitle">Invitar usuario</h2>
+    </div>
+    <div class="inv-form">
+      <div class="mf-group">
+        <label>Nombre completo</label>
+        <input type="text" id="invNombre" placeholder="Ej: Ana Mamani"/>
+      </div>
+      <div class="mf-group">
+        <label>Correo institucional</label>
+        <input type="email" id="invEmail" placeholder="usuario@cochabamba.gob.bo"/>
+      </div>
+      <div class="mf-row">
+        <div class="mf-group">
+          <label>Rol</label>
+          <select id="invRol">
+            <option value="admin">👑 Administrador</option>
+            <option value="supervisor">🧑‍💼 Supervisor</option>
+            <option value="operador" selected>🚛 Operador</option>
+          </select>
+        </div>
+        <div class="mf-group">
+          <label>Distrito</label>
+          <select id="invDistrito">
+            <option value="Todos">Todos</option>
+            <option value="Cercado">Cercado</option>
+            <option value="Quillacollo">Quillacollo</option>
+            <option value="Colcapirhua">Colcapirhua</option>
+            <option value="Sacaba">Sacaba</option>
+            <option value="Tiquipaya">Tiquipaya</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-rechazar" onclick="document.getElementById('modalInvOverlay').classList.remove('open')">Cancelar</button>
+      <button class="btn-modal-aprobar" id="btnInvGuardar">✅ Guardar</button>
+    </div>
+  </div>
+</div>
     </main>
   </div><!-- /main-wrapper -->
 
