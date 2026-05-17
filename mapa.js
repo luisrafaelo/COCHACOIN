@@ -311,3 +311,19 @@ renderAlertas();
 initMapa();
 
 console.log('%c🗺️ ECOLLAJTA Mapa en vivo · Cochabamba', 'color:#69F0AE;font-weight:bold;');
+/* ─── MENÚ MOBILE ─── */
+const mapaMenuToggle = document.getElementById('mapaMenuToggle');
+const mapaPanel      = document.querySelector('.mapa-panel');
+
+mapaMenuToggle?.addEventListener('click', () => {
+  mapaPanel?.classList.toggle('open');
+});
+
+document.addEventListener('click', (e) => {
+  if (window.innerWidth <= 768 &&
+      mapaPanel?.classList.contains('open') &&
+      !mapaPanel.contains(e.target) &&
+      e.target !== mapaMenuToggle) {
+    mapaPanel.classList.remove('open');
+  }
+});
