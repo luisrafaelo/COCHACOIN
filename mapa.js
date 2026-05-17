@@ -104,14 +104,30 @@ function renderCapa(capa) {
   if (capa === 'reportes') {
     REPORTES.forEach(r => agregarMarker(r));
   }
+if (capa === 'rutas') {
+    PUNTOS_LIMPIOS.forEach(p => agregarMarker(p));
 
-  if (capa === 'rutas') {
-    RUTAS_COORDS.forEach(r => {
-      L.polyline(r.coords, { color: r.color, weight: 4, opacity: 0.85 })
+    RUTAS_COORDS.forEach(async r => {
+      const waypoints = r.coords.map(c => `${c[1]},${c[0]}`).join(';');
+      let coords = r.coords;
+
+      try {
+        const res  = await fetch(
+          `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`
+        );
+        const data = await res.json();
+        if (data.code === 'Ok') {
+          coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+        }
+      } catch (e) {
+        console.warn('OSRM no disponible, usando línea recta:', e);
+      }
+
+      L.polyline(coords, { color: r.color, weight: 4, opacity: 0.85 })
         .addTo(rutasGroup);
     });
-    PUNTOS_LIMPIOS.forEach(p => agregarMarker(p));
   }
+
 }
 
 function agregarMarker(punto) {

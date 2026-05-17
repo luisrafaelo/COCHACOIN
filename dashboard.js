@@ -1559,29 +1559,42 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
    .bindPopup('<strong style="color:#ffa500;">Planta Cotapachi</strong><br/><span style="color:#A8C7E6;">Destino final de recolección</span>')
    .addTo(mapaRutas);
 
-  RUTAS_MOCK.forEach(r => {
-    L.polyline(r.coords, {
-      color: r.color + '44',
-      weight: 3,
-      dashArray: '6 4',
-    }).addTo(mapaRutas);
-  });
-
   setTimeout(() => {
     mapaRutas.invalidateSize();
     seleccionarRuta(RUTAS_MOCK[0].id);
   }, 300);
 }
 
-function dibujarRutaEnMapa(ruta) {
+/* — Dibuja ruta real usando OSRM (calles reales) — */
+async function dibujarRutaEnMapa(ruta) {
   if (!mapaRutas) return;
 
-  /* Limpiar capas anteriores */
   rutasLayers.forEach(l => mapaRutas.removeLayer(l));
   rutasLayers = [];
 
-  /* Línea principal de la ruta */
-  const linea = L.polyline(ruta.coords, {
+  /* Coordenadas en formato OSRM: lng,lat;lng,lat;... */
+  const waypoints = ruta.coords
+    .map(c => `${c[1]},${c[0]}`)
+    .join(';');
+
+  let rutaCoords = ruta.coords; /* fallback si falla OSRM */
+
+  try {
+    const res  = await fetch(
+      `https://router.project-osrm.org/route/v1/driving/${waypoints}?overview=full&geometries=geojson`
+    );
+    const data = await res.json();
+
+    if (data.code === 'Ok') {
+      /* OSRM devuelve [lng, lat], Leaflet necesita [lat, lng] */
+      rutaCoords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+    }
+  } catch (e) {
+    console.warn('OSRM no disponible, usando línea recta:', e);
+  }
+
+  /* Línea que sigue calles reales */
+  const linea = L.polyline(rutaCoords, {
     color: ruta.color,
     weight: 4,
     opacity: 0.9,
