@@ -428,7 +428,17 @@ let heatLayer    = null;
 let markersLayer = null;
 
 function initMapa() {
-  if (mapa) return;
+  if (mapa) {
+    mapa.invalidateSize();
+    return;
+  }
+
+  const contenedor = document.getElementById('mapa');
+  if (!contenedor) return;
+
+  /* Forzar dimensiones antes de inicializar */
+  contenedor.style.height = '420px';
+  contenedor.style.width  = '100%';
 
   mapa = L.map('mapa', {
     center: [-17.3935, -66.1570],
@@ -437,14 +447,16 @@ function initMapa() {
     attributionControl: false,
   });
 
-  // Tiles oscuros — tono azulado para coincidir con el tema
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap &copy; CARTO',
     subdomains: 'abcd',
     maxZoom: 19,
   }).addTo(mapa);
 
-  renderHeatmap();
+  setTimeout(() => {
+    mapa.invalidateSize();
+    renderHeatmap();
+  }, 300);
 }
 
 function renderHeatmap() {
@@ -1510,7 +1522,16 @@ function renderParadas() {
 
 /* — Mapa de rutas — */
 function initMapaRutas() {
-  if (mapaRutas) return;
+  if (mapaRutas) {
+    mapaRutas.invalidateSize();
+    return;
+  }
+
+  const contenedor = document.getElementById('mapaRutas');
+  if (!contenedor) return;
+
+  contenedor.style.height = '460px';
+  contenedor.style.width  = '100%';
 
   mapaRutas = L.map('mapaRutas', {
     center: [-17.3980, -66.1700],
@@ -1524,7 +1545,6 @@ function initMapaRutas() {
     maxZoom: 19,
   }).addTo(mapaRutas);
 
-  /* Planta Cotapachi */
   const iconPlanta = L.divIcon({
     className: '',
     html: `<div style="
@@ -1534,11 +1554,11 @@ function initMapaRutas() {
       font-size:16px;box-shadow:0 2px 12px rgba(0,0,0,0.5);">🏭</div>`,
     iconSize: [32,32], iconAnchor: [16,16],
   });
+
   L.marker([-17.4200, -66.1950], { icon: iconPlanta })
    .bindPopup('<strong style="color:#ffa500;">Planta Cotapachi</strong><br/><span style="color:#A8C7E6;">Destino final de recolección</span>')
    .addTo(mapaRutas);
 
-  /* Dibujar todas las rutas tenues */
   RUTAS_MOCK.forEach(r => {
     L.polyline(r.coords, {
       color: r.color + '44',
@@ -1547,8 +1567,10 @@ function initMapaRutas() {
     }).addTo(mapaRutas);
   });
 
-  /* Seleccionar la primera por defecto */
-  seleccionarRuta(RUTAS_MOCK[0].id);
+  setTimeout(() => {
+    mapaRutas.invalidateSize();
+    seleccionarRuta(RUTAS_MOCK[0].id);
+  }, 300);
 }
 
 function dibujarRutaEnMapa(ruta) {
